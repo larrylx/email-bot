@@ -1,7 +1,7 @@
+from flask import current_app
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 
-import os
 import base64
 import json
 
@@ -11,15 +11,18 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from app.common.utils import email_parser
+from app.common.utils.decorators import allowed_ip
 
 
 class GmailBot(Resource):
+    method_decorators = [allowed_ip]
+
     def __init__(self):
-        self.delegated_user = os.environ.get("GOOGLE_WORKSPACE_USER")
+        self.delegated_user = current_app.config["GOOGLE_WORKSPACE_USER"]
         if not self.delegated_user:
             raise ValueError("No GOOGLE_WORKSPACE_USER is set for Environment Variable")
 
-        self.credentials_json = json.loads(os.environ.get("GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS_JSON_STR"))
+        self.credentials_json = json.loads(current_app.config["GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS"])
         if not self.credentials_json:
             raise ValueError("No GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS_JSON_STR is set for Environment Variable")
 
@@ -31,17 +34,16 @@ class GmailBot(Resource):
         service = build('gmail', 'v1', credentials=delegated_credentials)
         return service
 
-    def _create_message(self, to, subject, message_text, sender=None):
+    def _create_message(self, to, subject, message_text):
         """Create a message for an email.
         Args:
-            sender: Email address of the sender.
             to: Email address of the receiver.
             subject: The subject of the email message.
             message_text: The text of the email message.
         Returns:
             An object containing a base64url encoded email object.
         """
-        sender = os.environ.get("EMAIL_BOT_SENDER")
+        sender = current_app.config["SEND_AS"]
         if not sender:
             sender = self.delegated_user
 
