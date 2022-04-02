@@ -1,3 +1,4 @@
+# v0.0.1
 FROM python:3.9
 
 RUN mkdir /app/
