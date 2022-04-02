@@ -6,4 +6,4 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 COPY /app /app
 
-CMD gunicorn -b 0.0.0.0:36245 app:app
+CMD gunicorn -b 0.0.0.0:5150 app:app

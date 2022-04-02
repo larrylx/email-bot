@@ -10,8 +10,8 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from app.common.utils import email_parser
-from app.common.utils.decorators import allowed_ip
+from common.utils import email_parser
+from common.utils.decorators import allowed_ip
 
 
 class GmailBot(Resource):
@@ -20,11 +20,11 @@ class GmailBot(Resource):
     def __init__(self):
         self.delegated_user = current_app.config["GOOGLE_WORKSPACE_USER"]
         if not self.delegated_user:
-            raise ValueError("No GOOGLE_WORKSPACE_USER is set for Environment Variable")
+            raise ValueError("No GOOGLE_WORKSPACE_USER is set")
 
-        self.credentials_json = json.loads(current_app.config["GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS"])
+        self.credentials_json = json.loads(current_app.config["GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS"], strict=False)
         if not self.credentials_json:
-            raise ValueError("No GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS_JSON_STR is set for Environment Variable")
+            raise ValueError("No GOOGLE_WORKSPACE_SERVICE_ACCOUNT_CREDENTIALS_ was set")
 
         self.scopes = ['https://www.googleapis.com/auth/gmail.send']
 
