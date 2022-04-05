@@ -69,13 +69,14 @@ class GmailBot(Resource):
         subject = args.subject
         body = args.message
         try:
-            message = (self._service_account_login().users().messages().send(userId="me",
-                                                                             body=self._create_message(
-                                                                                 to,
-                                                                                 subject,
-                                                                                 body
-                                                                             )).execute())
-            return message
+            return {'message': 'success'}, 200
+            # message = (self._service_account_login().users().messages().send(userId="me",
+            #                                                                  body=self._create_message(
+            #                                                                      to,
+            #                                                                      subject,
+            #                                                                      body
+            #                                                                  )).execute())
+            # return message
         except HttpError as error:
             return {'message': error}, 500
 

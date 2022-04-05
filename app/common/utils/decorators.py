@@ -11,6 +11,6 @@ def allowed_ip(func):
 
         else:
 
-            return {'message': 'Your IP is not allowed to send email using bot.'}, 401
+            return {'message': f'Your IP {request.remote_addr} is not allowed to send email using this bot.'}, 401
 
     return wrapper
